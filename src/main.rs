@@ -491,6 +491,26 @@ fn cmd_read(book: &Book, chapters: Option<&str>) -> Result<()> {
         }
     };
 
+    if spine_indices.is_empty() {
+        if let Some(spec) = chapters {
+            eprintln!("epub: no content found for chapter(s) {spec}");
+        }
+        return Ok(());
+    }
+
+    let all_empty = spine_indices
+        .iter()
+        .all(|&i| book.spine.get(i).is_none_or(|s| s.content.is_empty()));
+
+    if all_empty {
+        if let Some(spec) = chapters {
+            eprintln!(
+                "epub: chapter(s) {spec} resolved but contained no text (image-only pages)"
+            );
+        }
+        return Ok(());
+    }
+
     let mut first = true;
     for &idx in &spine_indices {
         if let Some(item) = book.spine.get(idx) {
