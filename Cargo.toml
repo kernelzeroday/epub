@@ -1,0 +1,11 @@
+[package]
+name = "epubcat"
+version = "0.1.0"
+edition = "2024"
+description = "Non-interactive EPUB text extraction for CLI and piping"
+license = "MIT"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+epub-parser = "0.3"
+anyhow = "1"
