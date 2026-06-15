@@ -1,5 +1,5 @@
 [package]
-name = "epubcat"
+name = "epub"
 version = "0.1.0"
 edition = "2024"
 description = "Non-interactive EPUB text extraction for CLI and piping"

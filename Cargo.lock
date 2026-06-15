@@ -305,6 +305,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "epub"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "epub-parser",
+]
+
+[[package]]
 name = "epub-parser"
 version = "0.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -313,15 +322,6 @@ dependencies = [
  "ordered_hash_map",
  "quick-xml",
  "zip",
-]
-
-[[package]]
-name = "epubcat"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "epub-parser",
 ]
 
 [[package]]

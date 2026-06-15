@@ -2,36 +2,26 @@ use std::path::{Path, PathBuf};
 use std::process;
 
 use anyhow::{Context, Result};
-use clap::{Parser, Subcommand};
+use clap::Parser;
 use epub_parser::Epub;
 
 #[derive(Parser)]
-#[command(name = "epubcat", about = "Non-interactive EPUB text extraction")]
+#[command(name = "epub", about = "Non-interactive EPUB text extraction")]
 struct Cli {
-    #[command(subcommand)]
-    command: Command,
-}
+    /// Path to EPUB file
+    file: PathBuf,
 
-#[derive(Subcommand)]
-enum Command {
-    /// Show book metadata
-    Info {
-        /// Path to EPUB file
-        file: PathBuf,
-    },
+    /// Chapter(s) to extract: single (3), range (1-5), list (1,3,5), or mixed (1-3,7,9-12)
+    #[arg(short, long)]
+    chapters: Option<String>,
+
     /// List chapters with indices
-    List {
-        /// Path to EPUB file
-        file: PathBuf,
-    },
-    /// Extract chapter text to stdout
-    Read {
-        /// Path to EPUB file
-        file: PathBuf,
-        /// Chapter(s) to extract: single (3), range (1-5), list (1,3,5), or mixed (1-3,7,9-12)
-        #[arg(short, long)]
-        chapters: Option<String>,
-    },
+    #[arg(short, long)]
+    list: bool,
+
+    /// Show book metadata
+    #[arg(short, long)]
+    info: bool,
 }
 
 fn parse_epub(path: &Path) -> Result<Epub> {
@@ -127,13 +117,15 @@ fn cmd_read(path: &Path, chapters: Option<&str>) -> Result<()> {
 
 fn main() {
     let cli = Cli::parse();
-    let result = match &cli.command {
-        Command::Info { file } => cmd_info(file),
-        Command::List { file } => cmd_list(file),
-        Command::Read { file, chapters } => cmd_read(file, chapters.as_deref()),
+    let result = if cli.info {
+        cmd_info(&cli.file)
+    } else if cli.list {
+        cmd_list(&cli.file)
+    } else {
+        cmd_read(&cli.file, cli.chapters.as_deref())
     };
     if let Err(e) = result {
-        eprintln!("epubcat: {e:#}");
+        eprintln!("epub: {e:#}");
         process::exit(1);
     }
 }
